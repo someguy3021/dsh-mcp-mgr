@@ -54,6 +54,15 @@ interface McpMgrNamespace {
  * `ctx.get`, which bypasses the inject guard.
  */
 export async function apply(ctx: ClientContext): Promise<void> {
+  try {
+    await applyInner(ctx)
+  } catch (error) {
+    console.error('[mcp-mgr-ui] apply failed:', error)
+    throw error
+  }
+}
+
+async function applyInner(ctx: ClientContext): Promise<void> {
   const disposeMount = await ctx.remote.$mount(TYPERT_REMOTE)
   ctx.effect(() => () => disposeMount(), 'dsh-mcp-mgr-ui: remote mount')
 
